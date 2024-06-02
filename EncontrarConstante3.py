@@ -3,6 +3,7 @@ import random
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from moviepy.editor import ImageSequenceClip
 from tkinter import Tk, Label, Entry, Button, ttk
 
 def prinsipal ():
@@ -66,6 +67,11 @@ def crear_individuo():
                   round(float(random.random()), 2)]
     return constantes
 
+def crear_video():
+    clip = ImageSequenceClip('gen_images_resultado', fps=1)
+    video_filename = 'generations_video.mp4'
+    clip.write_videofile(video_filename, codec='libx264')
+
 def obtener_variables():
     file_path = '2024.05.22 dataset 8A.csv'
     df = pd.read_csv(file_path)
@@ -83,8 +89,8 @@ def crear_grafica_error(norm_errores):
     plt.figure(figsize=(10, 10))
     plt.plot(norm_errores, color='blue', label='Generacion norma de error')
     plt.title('Norma de errores')
-    plt.xlabel('Norma de error')
-    plt.ylabel('Generaciones')
+    plt.xlabel('Generaciones')
+    plt.ylabel('Norma de error')
     plt.grid(True)
     plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=1)
     plt.tight_layout()
@@ -130,15 +136,15 @@ def crear_grafica(yd, fx, i):
     x_yd = np.linspace(0, len(yd)-1, len(yd))
     x_fx = np.linspace(0, len(fx)-1, len(fx))
 
-    plt.plot(fx, color='red', label='Resuldato obtenido')
+    plt.plot(fx, color='red', label='Resultado obtenido')
     plt.plot(yd, label='Resultado esperado')
     plt.scatter(x_fx, fx, color='red', s= 100, label='Resultado obtenidos')
     plt.scatter(x_yd, yd, color='blue', s= 20, label='Resultado deseados')
-    plt.title(f'Generacion {i}')
+    plt.title(f'Generación {i}')
     plt.xlabel('Numero de generación')
     plt.ylabel('Y')
     plt.grid(True)
-    plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=3)
+    plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=4)
     plt.tight_layout()
     filename = f"{img_dir}/generation{i}.png"
     plt.savefig(filename)
@@ -161,8 +167,8 @@ def definir_y(individuo, x1, x2, x3, x4):
 
 def cruza(pareja1, pareja2):
     posicion = random.randint(1, len(pareja1) - 1)
-    hijo1 = pareja1[:posicion] + pareja1[posicion:]
-    hijo2 = pareja2[:posicion] + pareja2[posicion:]
+    hijo1 = pareja1[:posicion] + pareja2[posicion:]
+    hijo2 = pareja2[:posicion] + pareja1[posicion:]
     return hijo1, hijo2
 
 def fitness(y, resultado):
@@ -178,9 +184,9 @@ def mutacion(individuo, pmutacion):
                 muto = True
     return nuevo
 
-def definir_mutacion(hijo, prabilidad_mutacioni, prabilidad_mutaciong):
-    if random.randint(1, 99) / 100 < prabilidad_mutacioni:
-        hijo = mutacion(hijo, prabilidad_mutaciong)
+def definir_mutacion(hijo, probabilidad_mutacioni, probabilidad_mutaciong):
+    if random.randint(1, 99) / 100 < probabilidad_mutacioni:
+        hijo = mutacion(hijo, probabilidad_mutaciong)
     return hijo
 
 def podar(poblacion, max_individuos):

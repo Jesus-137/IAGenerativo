@@ -17,6 +17,8 @@ def prinsipal ():
     generaciones = []
     mejores = []
     errores_menores = []
+    promedio_errores = []
+    peores = []
     X, Y = obtener_variables()
     x1, x2, x3, x4 = X
     for _ in range(individuos_iniciales):
@@ -41,11 +43,13 @@ def prinsipal ():
                 hijo1, hijo2 = cruza(pareja1, pareja2)
                 poblacion.append(definir_mutacion(hijo1, pmutacion, pmutaciong))
                 poblacion.append(definir_mutacion(hijo2, pmutacion, pmutaciong))
+        promedio_errores.append(round(sum(fitnes) / len(fitnes), 2))
+        peores.append(max(fitnes))
         poblacion = podar(poblacion, max_poblacion)
         generaciones.append(poblacion)
 
     mostrar_tabla(mejores)
-    crear_grafica_error(errores_menores)
+    crear_grafica_error(errores_menores, promedio_errores, peores)
     a =[]
     b = []
     c = []
@@ -85,9 +89,11 @@ def obtener_variables():
         xs.append(datos[dato])
     return xs, resultados
 
-def crear_grafica_error(norm_errores):
+def crear_grafica_error(norm_errores, promedio_errores, peores):
     plt.figure(figsize=(10, 10))
     plt.plot(norm_errores, color='blue', label='Generacion norma de error')
+    plt.plot(promedio_errores, color = 'black', label = 'Promedio de |error|')
+    plt.plot(peores, color ='red', label = 'Peores de cada generacion')
     plt.title('Norma de errores')
     plt.xlabel('Generaciones')
     plt.ylabel('Norma de error')
